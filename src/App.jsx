@@ -12,7 +12,7 @@ import GoalsSettings from '@/pages/GoalsSettings';
 function App() {
   return (
     <QueryClientProvider client={queryClientInstance}>
-      <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+      <Router basename="/macro-fuel/" future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
           <Route element={<AppLayout />}>
             <Route path="/" element={<Dashboard />} />
