@@ -29,10 +29,24 @@ function toRecipe(doc) {
     recipeIngredients = [];
   }
 
+  // categories may come back as a JSON string if the Appwrite attribute
+  // is typed as "string" rather than a string array.
+  let categories = [];
+  if (Array.isArray(doc.categories)) {
+    categories = doc.categories;
+  } else if (typeof doc.categories === 'string' && doc.categories) {
+    try {
+      const parsed = JSON.parse(doc.categories);
+      categories = Array.isArray(parsed) ? parsed : [];
+    } catch {
+      categories = [];
+    }
+  }
+
   return {
     id:                 doc.$id,
     name:               doc.name,
-    categories:         doc.categories ?? [],
+    categories,
     recipe_ingredients: recipeIngredients,
     total_calories:     doc.total_calories ?? 0,
     total_protein:      doc.total_protein  ?? 0,
@@ -42,9 +56,10 @@ function toRecipe(doc) {
 }
 
 function toPayload(data) {
+  const cats = Array.isArray(data.categories) ? data.categories : [];
   return {
     name:               data.name,
-    categories:         data.categories ?? [],
+    categories:         JSON.stringify(cats),
     recipe_ingredients: JSON.stringify(data.recipe_ingredients ?? []),
     total_calories:     data.total_calories ?? 0,
     total_protein:      data.total_protein  ?? 0,
